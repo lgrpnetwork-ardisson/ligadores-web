@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><%- include('partials/head') %></head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="container">
+      <div class="page-head">
+        <div class="eyebrow">Exp. <%= user.id %></div>
+        <h1>Mi expediente</h1>
+        <p>Datos de tu personaje sincronizados directamente desde el servidor.</p>
+      </div>
+
+      <% if (!character) { %>
+        <div class="empty-state">
+          <p><strong>Todavía no encontramos un personaje vinculado a tu Discord.</strong></p>
+          <p style="margin-top:.5rem;">Conéctate al servidor al menos una vez con este mismo Discord para que aparezcan tus datos aquí.</p>
+        </div>
+      <% } else { %>
+        <div class="grid-3" style="margin-bottom:1.6rem;">
+          <div class="card">
+            <div class="stat-label">Efectivo</div>
+            <div class="stat-value">$<%= Number(character.cash).toLocaleString('es-DO') %></div>
+          </div>
+          <div class="card">
+            <div class="stat-label">Banco</div>
+            <div class="stat-value">$<%= Number(character.bank).toLocaleString('es-DO') %></div>
+          </div>
+          <div class="card">
+            <div class="stat-label">Tiempo jugado</div>
+            <div class="stat-value"><%= Math.floor(character.playtimeMinutes / 60) %>h <%= character.playtimeMinutes % 60 %>m</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="stat-label">Personaje</div>
+            <h3 style="color:var(--white); font-size:1.4rem; margin:.4rem 0;"><%= character.name %></h3>
+            <p style="color:var(--ink-dim); font-family:'JetBrains Mono', monospace; font-size:.85rem;">Trabajo: <%= character.job %></p>
+          </div>
+          <div class="card">
+            <div class="stat-label">Inventario</div>
+            <% if (!character.inventory || !character.inventory.length) { %>
+              <p style="color:var(--ink-dim); margin-top:.6rem;">Sin objetos registrados, o tu script de inventario no está conectado todavía a este panel.</p>
+            <% } else { %>
+              <table style="margin-top:.8rem;">
+                <thead><tr><th>Objeto</th><th>Cantidad</th></tr></thead>
+                <tbody>
+                <% character.inventory.forEach(function(it){ %>
+                  <tr><td><%= it.item || it.name %></td><td><%= it.count || it.amount %></td></tr>
+                <% }) %>
+                </tbody>
+              </table>
+            <% } %>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </main>
+</body>
+</html>

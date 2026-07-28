@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><%- include('partials/head') %></head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="container" style="max-width:640px;">
+      <div class="page-head">
+        <div class="eyebrow">Administración</div>
+        <h1>Jefes de <%= job.label %></h1>
+        <p>El jefe puede aprobar o rechazar postulaciones a este trabajo desde el Panel de jefe.</p>
+      </div>
+
+      <form method="POST" action="/admin/jobs/<%= job.id %>/bosses/add" class="card" style="margin-bottom:2rem;">
+        <label for="discord_id">Discord ID del jefe</label>
+        <input type="text" id="discord_id" name="discord_id" placeholder="123456789012345678" required>
+        <button type="submit" class="btn btn-solid">Agregar jefe</button>
+      </form>
+
+      <% if (!bosses.length) { %>
+        <div class="empty-state">Este trabajo todavía no tiene jefes asignados.</div>
+      <% } else { %>
+        <table>
+          <thead><tr><th>Discord ID</th><th></th></tr></thead>
+          <tbody>
+            <% bosses.forEach(function(b){ %>
+              <tr>
+                <td style="color:var(--ink);"><%= b.discord_id %></td>
+                <td>
+                  <form method="POST" action="/admin/jobs/<%= job.id %>/bosses/<%= b.discord_id %>/remove">
+                    <button type="submit" class="btn btn-danger btn-small">Quitar</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </main>
+</body>
+</html>

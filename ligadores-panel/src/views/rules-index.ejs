@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><%- include('partials/head') %></head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="container" style="max-width:820px;">
+      <div class="page-head">
+        <div class="eyebrow">Wiki del servidor</div>
+        <h1>Código de la calle</h1>
+        <p>Normativa mantenida por el staff. Se actualiza con el tiempo — vuelve a revisarla de vez en cuando.</p>
+        <% if (user && user.isAdmin) { %>
+          <a href="/admin/wiki" class="btn btn-ghost btn-small" style="margin-top:1rem;">Administrar artículos</a>
+        <% } %>
+      </div>
+
+      <% const categories = Object.keys(byCategory); %>
+      <% if (!categories.length) { %>
+        <div class="empty-state">Todavía no hay artículos publicados.</div>
+      <% } else { %>
+        <% categories.forEach(function(cat){ %>
+          <div style="margin-bottom:2.4rem;">
+            <div class="stat-label" style="margin-bottom:.8rem;"><%= cat %></div>
+            <% byCategory[cat].forEach(function(article){ %>
+              <a href="/rules/<%= article.slug %>" class="card" style="display:block; margin-bottom:.8rem;">
+                <h3 style="color:var(--white); font-size:1.1rem;"><%= article.title %></h3>
+              </a>
+            <% }) %>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+  </main>
+</body>
+</html>

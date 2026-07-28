@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><%- include('partials/head') %></head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="container" style="max-width:760px;">
+      <div class="page-head">
+        <div class="eyebrow"><%= article.category %></div>
+        <h1 style="font-size:2.2rem;"><%= article.title %></h1>
+        <p style="font-family:'JetBrains Mono', monospace; font-size:.78rem; color:var(--ink-faint);">
+          Última edición: <%= new Date(article.updated_at).toLocaleString('es-DO') %><% if (article.updated_by) { %> por <%= article.updated_by %><% } %>
+        </p>
+        <% if (user && user.isAdmin) { %>
+          <a href="/admin/wiki/<%= article.id %>/edit" class="btn btn-ghost btn-small" style="margin-top:1rem;">Editar artículo</a>
+        <% } %>
+      </div>
+      <div class="card wiki-content">
+        <%- html %>
+      </div>
+      <a href="/rules" class="btn btn-ghost" style="margin-top:2rem;">← Volver a la normativa</a>
+    </div>
+  </main>
+</body>
+</html>

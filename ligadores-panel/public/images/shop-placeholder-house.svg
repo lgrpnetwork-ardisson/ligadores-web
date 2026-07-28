@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#161614"/>
+  <rect width="400" height="300" fill="url(#dots)"/>
+  <defs>
+    <pattern id="dots" width="6" height="6" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="0.6" fill="#ffffff" opacity="0.05"/>
+    </pattern>
+  </defs>
+  <g fill="none" stroke="#f3f1e7" stroke-width="3" stroke-linejoin="round">
+    <path d="M130,190 L130,120 L200,70 L270,120 L270,190 Z"/>
+    <rect x="185" y="140" width="30" height="50" fill="#161614"/>
+    <rect x="145" y="140" width="24" height="24" fill="#161614"/>
+    <rect x="231" y="140" width="24" height="24" fill="#161614"/>
+  </g>
+  <text x="200" y="250" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" letter-spacing="3" fill="#6b675c">PROPIEDAD</text>
+</svg>

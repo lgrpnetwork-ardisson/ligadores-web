@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><%- include('partials/head') %></head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="container">
+      <div class="page-head">
+        <div class="eyebrow">Administración</div>
+        <h1>Artículos del mercado</h1>
+      </div>
+
+      <form method="POST" action="/admin/shop/create" class="card" style="margin-bottom:2.4rem;" enctype="multipart/form-data">
+        <label for="name">Nombre</label>
+        <input type="text" id="name" name="name" required>
+        <label for="description">Descripción</label>
+        <textarea id="description" name="description"></textarea>
+        <label for="image">Foto del artículo (JPG, PNG o WEBP, máx. 4MB)</label>
+        <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/webp">
+        <label for="price">Precio (USD)</label>
+        <input type="number" step="0.01" id="price" name="price" required>
+        <label for="category">Categoría</label>
+        <select id="category" name="category">
+          <option value="vip">VIP</option>
+          <option value="coins">Monedas</option>
+          <option value="house">Casa</option>
+          <option value="otro">Otro</option>
+        </select>
+        <button type="submit" class="btn btn-solid">Agregar artículo</button>
+      </form>
+
+      <table>
+        <thead>
+          <tr><th>Foto</th><th>Nombre</th><th>Precio</th><th>Categoría</th><th>Estado</th><th></th></tr>
+        </thead>
+        <tbody>
+          <% items.forEach(function(item){ %>
+            <tr>
+              <td>
+                <img src="<%= item.image || `/images/shop-placeholder-${item.category}.svg` %>" alt="" style="width:56px; height:42px; object-fit:cover; border:1px solid var(--line);">
+              </td>
+              <td style="color:var(--ink);"><%= item.name %></td>
+              <td>$<%= Number(item.price).toFixed(2) %></td>
+              <td><%= item.category %></td>
+              <td><%= item.active ? 'Activo' : 'Oculto' %></td>
+              <td style="display:flex; gap:.6rem;">
+                <form method="POST" action="/admin/shop/<%= item.id %>/toggle">
+                  <button type="submit" class="btn btn-ghost btn-small"><%= item.active ? 'Ocultar' : 'Activar' %></button>
+                </form>
+                <form method="POST" action="/admin/shop/<%= item.id %>/delete">
+                  <button type="submit" class="btn btn-danger btn-small">Eliminar</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><%- include('partials/head') %></head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="container" style="max-width:720px;">
+      <div class="page-head">
+        <div class="eyebrow">Administración</div>
+        <h1><%= article ? 'Editar artículo' : 'Nuevo artículo' %></h1>
+      </div>
+      <form method="POST" action="<%= article ? `/admin/wiki/${article.id}/edit` : '/admin/wiki/new' %>" class="card">
+        <label for="title">Título</label>
+        <input type="text" id="title" name="title" value="<%= article ? article.title : '' %>" required>
+
+        <label for="category">Categoría</label>
+        <input type="text" id="category" name="category" value="<%= article ? article.category : 'General' %>" placeholder="Ej. Reglas generales, Rol, Facciones...">
+
+        <label for="content">Contenido (admite Markdown: # títulos, **negritas**, listas con -)</label>
+        <textarea id="content" name="content" style="min-height:320px; font-family:'JetBrains Mono', monospace;" required><%= article ? article.content : '' %></textarea>
+
+        <button type="submit" class="btn btn-solid"><%= article ? 'Guardar cambios' : 'Publicar artículo' %></button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

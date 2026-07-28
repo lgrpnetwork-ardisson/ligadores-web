@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><%- include('partials/head') %></head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="container">
+      <div class="page-head">
+        <div class="eyebrow">Administración</div>
+        <h1>Artículos de la normativa</h1>
+        <a href="/admin/wiki/new" class="btn btn-solid btn-small" style="margin-top:1rem;">+ Nuevo artículo</a>
+      </div>
+
+      <% if (!articles.length) { %>
+        <div class="empty-state">Todavía no hay artículos.</div>
+      <% } else { %>
+        <table>
+          <thead><tr><th>Título</th><th>Categoría</th><th>Actualizado</th><th></th></tr></thead>
+          <tbody>
+            <% articles.forEach(function(a){ %>
+              <tr>
+                <td style="color:var(--ink);"><a href="/rules/<%= a.slug %>"><%= a.title %></a></td>
+                <td><%= a.category %></td>
+                <td><%= new Date(a.updated_at).toLocaleDateString('es-DO') %></td>
+                <td style="display:flex; gap:.6rem;">
+                  <a href="/admin/wiki/<%= a.id %>/edit" class="btn btn-ghost btn-small">Editar</a>
+                  <form method="POST" action="/admin/wiki/<%= a.id %>/delete">
+                    <button type="submit" class="btn btn-danger btn-small">Eliminar</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </main>
+</body>
+</html>

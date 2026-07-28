@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><%- include('partials/head') %></head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="container">
+      <div class="page-head">
+        <div class="eyebrow">Oportunidades en el barrio</div>
+        <h1>Trabajos disponibles</h1>
+        <p>Postúlate a un trabajo. El jefe de cada uno revisa y decide si entras a su equipo.</p>
+        <a href="/jobs/mine" class="btn btn-ghost btn-small" style="margin-top:1rem;">Ver mis postulaciones</a>
+      </div>
+
+      <% if (!jobs.length) { %>
+        <div class="empty-state">No hay trabajos abiertos por ahora.</div>
+      <% } else { %>
+        <div class="grid-3">
+          <% jobs.forEach(function(job){ %>
+            <div class="card">
+              <h3 style="color:var(--white); font-size:1.2rem; margin-bottom:.6rem;"><%= job.label %></h3>
+              <p style="color:var(--ink-dim); font-size:.9rem; margin-bottom:1.4rem;"><%= job.description %></p>
+              <a href="/jobs/<%= job.id %>/apply" class="btn btn-solid btn-small">Postularme</a>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+  </main>
+</body>
+</html>

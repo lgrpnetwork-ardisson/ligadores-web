@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><%- include('partials/head') %></head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="container" style="max-width:560px; text-align:center;">
+      <div class="card">
+        <div class="eyebrow" style="justify-content:center;">Orden registrada</div>
+        <h1 style="font-size:1.8rem; color:var(--white); margin-bottom:1rem;"><%= item.name %></h1>
+        <p style="color:var(--ink-dim); margin-bottom:1.6rem;">
+          Tu orden por $<%= Number(item.price).toFixed(2) %> quedó pendiente de confirmación.
+          Un administrador la validará y te avisará por Discord cuando esté lista.
+        </p>
+        <a href="/shop" class="btn btn-ghost">Volver al mercado</a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

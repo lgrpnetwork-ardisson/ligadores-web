@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><%- include('partials/head') %></head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="container">
+      <div class="page-head">
+        <div class="eyebrow">Apoya al servidor</div>
+        <h1>Mercado</h1>
+        <p>Al comprar, tu orden queda pendiente hasta que un administrador confirme el pago. Recibirás aviso por Discord.</p>
+      </div>
+
+      <% if (!items.length) { %>
+        <div class="empty-state">Aún no hay artículos disponibles en el mercado.</div>
+      <% } else { %>
+        <div class="grid-3">
+          <% items.forEach(function(item){ %>
+            <div class="card product-card">
+              <div class="product-image">
+                <img src="<%= item.image || `/images/shop-placeholder-${item.category}.svg` %>" alt="<%= item.name %>">
+              </div>
+              <div class="product-body">
+                <div class="stat-label"><%= item.category %></div>
+                <h3 style="color:var(--white); font-size:1.3rem; margin:.5rem 0;"><%= item.name %></h3>
+                <p style="color:var(--ink-dim); font-size:.9rem; margin-bottom:1.2rem;"><%= item.description %></p>
+                <div class="stat-value" style="margin-bottom:1.2rem;">$<%= Number(item.price).toFixed(2) %></div>
+                <form method="POST" action="/shop/buy/<%= item.id %>">
+                  <button type="submit" class="btn btn-solid" style="width:100%; justify-content:center;">Comprar</button>
+                </form>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+  </main>
+</body>
+</html>

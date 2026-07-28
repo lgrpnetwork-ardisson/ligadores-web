@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><%- include('partials/head') %></head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="container" style="max-width:720px;">
+      <div class="page-head">
+        <div class="eyebrow">Tu historial</div>
+        <h1>Mis postulaciones</h1>
+      </div>
+      <% if (!applications.length) { %>
+        <div class="empty-state">Todavía no te has postulado a ningún trabajo. <a href="/jobs" style="color:var(--ink);">Ver trabajos disponibles →</a></div>
+      <% } else { %>
+        <% applications.forEach(function(app){ %>
+          <div class="card" style="margin-bottom:1.2rem;">
+            <div class="stat-label"><%= app.job_label %></div>
+            <p style="margin:.6rem 0;">
+              <% if (app.status === 'pending') { %><span class="badge badge-pending">En revisión</span>
+              <% } else if (app.status === 'approved') { %><span class="badge badge-approved">Aprobada</span>
+              <% } else { %><span class="badge badge-rejected">Rechazada</span><% } %>
+            </p>
+            <p style="color:var(--ink-dim); font-size:.85rem;">Enviada el <%= new Date(app.created_at).toLocaleDateString('es-DO') %></p>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+  </main>
+</body>
+</html>

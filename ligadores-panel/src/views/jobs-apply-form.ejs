@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><%- include('partials/head') %></head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="container" style="max-width:640px;">
+      <div class="page-head">
+        <div class="eyebrow">Postulación</div>
+        <h1><%= job.label %></h1>
+        <p><%= job.description %></p>
+      </div>
+      <form method="POST" action="/jobs/<%= job.id %>/apply" class="card">
+        <label for="full_name">Nombre de tu personaje</label>
+        <input type="text" id="full_name" name="full_name" required>
+        <label for="age">Edad del personaje</label>
+        <input type="number" id="age" name="age" min="16" max="99" required>
+        <label for="motivation">¿Por qué quieres este trabajo?</label>
+        <textarea id="motivation" name="motivation" required></textarea>
+        <label for="experience">Experiencia relacionada (opcional)</label>
+        <textarea id="experience" name="experience"></textarea>
+        <button type="submit" class="btn btn-solid">Enviar postulación</button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

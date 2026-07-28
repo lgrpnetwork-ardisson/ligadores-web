@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><%- include('partials/head') %></head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="container">
+      <div class="page-head">
+        <div class="eyebrow">Solo administradores</div>
+        <h1>Panel de administración</h1>
+      </div>
+      <div class="grid-3">
+        <a href="/jobs/boss" class="card">
+          <div class="stat-label">Postulaciones</div>
+          <div class="stat-value"><%= pendingJobs %></div>
+          <p style="color:var(--ink-dim); margin-top:.6rem;">pendientes en todos los trabajos</p>
+        </a>
+        <a href="/admin/orders" class="card">
+          <div class="stat-label">Órdenes</div>
+          <div class="stat-value"><%= orders %></div>
+          <p style="color:var(--ink-dim); margin-top:.6rem;">compras por confirmar</p>
+        </a>
+        <a href="/admin/jobs" class="card">
+          <div class="stat-label">Trabajos</div>
+          <div class="stat-value">⚙</div>
+          <p style="color:var(--ink-dim); margin-top:.6rem;">crear trabajos y asignar jefes</p>
+        </a>
+        <a href="/admin/shop" class="card">
+          <div class="stat-label">Mercado</div>
+          <div class="stat-value">⚙</div>
+          <p style="color:var(--ink-dim); margin-top:.6rem;">administrar artículos</p>
+        </a>
+        <a href="/admin/wiki" class="card">
+          <div class="stat-label">Normativa</div>
+          <div class="stat-value">⚙</div>
+          <p style="color:var(--ink-dim); margin-top:.6rem;">editar la wiki del servidor</p>
+        </a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

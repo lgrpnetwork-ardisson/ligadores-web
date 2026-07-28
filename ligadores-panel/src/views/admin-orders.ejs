@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><%- include('partials/head') %></head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="container">
+      <div class="page-head">
+        <div class="eyebrow">Administración</div>
+        <h1>Órdenes pendientes</h1>
+      </div>
+
+      <% if (!orders.length) { %>
+        <div class="empty-state">No hay órdenes pendientes.</div>
+      <% } else { %>
+        <table>
+          <thead><tr><th>Usuario</th><th>Artículo</th><th>Precio</th><th>Fecha</th><th></th></tr></thead>
+          <tbody>
+            <% orders.forEach(function(order){ %>
+              <tr>
+                <td style="color:var(--ink);">@<%= order.discord_username %></td>
+                <td><%= order.item_name %></td>
+                <td>$<%= Number(order.price).toFixed(2) %></td>
+                <td><%= new Date(order.created_at).toLocaleDateString('es-DO') %></td>
+                <td>
+                  <form method="POST" action="/admin/orders/<%= order.id %>/fulfill">
+                    <button type="submit" class="btn btn-solid btn-small">Marcar pagada</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </main>
+</body>
+</html>

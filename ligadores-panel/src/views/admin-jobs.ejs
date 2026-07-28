@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><%- include('partials/head') %></head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="container">
+      <div class="page-head">
+        <div class="eyebrow">Administración</div>
+        <h1>Trabajos</h1>
+      </div>
+
+      <form method="POST" action="/admin/jobs/create" class="card" style="margin-bottom:2.4rem;">
+        <label for="name">Nombre interno (sin espacios, ej. policia)</label>
+        <input type="text" id="name" name="name" required>
+        <label for="label">Nombre visible</label>
+        <input type="text" id="label" name="label" required>
+        <label for="description">Descripción</label>
+        <textarea id="description" name="description"></textarea>
+        <button type="submit" class="btn btn-solid">Crear trabajo</button>
+      </form>
+
+      <table>
+        <thead><tr><th>Trabajo</th><th>Estado</th><th></th></tr></thead>
+        <tbody>
+          <% jobs.forEach(function(job){ %>
+            <tr>
+              <td style="color:var(--ink);"><%= job.label %></td>
+              <td><%= job.active ? 'Activo' : 'Oculto' %></td>
+              <td style="display:flex; gap:.6rem;">
+                <a href="/admin/jobs/<%= job.id %>/bosses" class="btn btn-ghost btn-small">Jefes</a>
+                <form method="POST" action="/admin/jobs/<%= job.id %>/toggle">
+                  <button type="submit" class="btn btn-ghost btn-small"><%= job.active ? 'Ocultar' : 'Activar' %></button>
+                </form>
+                <form method="POST" action="/admin/jobs/<%= job.id %>/delete">
+                  <button type="submit" class="btn btn-danger btn-small">Eliminar</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</body>
+</html>
