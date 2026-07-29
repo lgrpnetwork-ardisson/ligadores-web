@@ -43,14 +43,19 @@
             <% if (!character.inventory || !character.inventory.length) { %>
               <p style="color:var(--ink-dim); margin-top:.6rem;">Sin objetos registrados, o tu script de inventario no está conectado todavía a este panel.</p>
             <% } else { %>
-              <table style="margin-top:.8rem;">
-                <thead><tr><th>Objeto</th><th>Cantidad</th></tr></thead>
-                <tbody>
-                <% character.inventory.forEach(function(it){ %>
-                  <tr><td><%= it.item || it.name %></td><td><%= it.count || it.amount %></td></tr>
-                <% }) %>
-                </tbody>
-              </table>
+              <div class="inventory-scroll">
+                <div class="inventory-grid">
+                  <% character.inventory.forEach(function(it){ %>
+                    <div class="inv-item">
+                      <div class="inv-item-icon">×<%= it.count || it.amount %></div>
+                      <div class="inv-item-info">
+                        <span class="inv-item-name"><%= (it.item || it.name || '').toString().replace(/_/g, ' ') %></span>
+                        <span class="inv-item-count">cantidad: <%= it.count || it.amount %></span>
+                      </div>
+                    </div>
+                  <% }) %>
+                </div>
+              </div>
             <% } %>
           </div>
         </div>
