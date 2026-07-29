@@ -8,14 +8,27 @@ router.get('/login', (req, res) => {
 
 router.get('/auth/discord', passport.authenticate('discord'));
 
-router.get('/auth/discord/callback',
-  passport.authenticate('discord', { failureRedirect: '/login' }),
-  (req, res) => {
-    const redirectTo = req.session.returnTo || '/dashboard';
-    delete req.session.returnTo;
-    res.redirect(redirectTo);
-  }
-);
+router.get('/auth/discord/callback', (req, res, next) => {
+  passport.authenticate('discord', (err, user, info) => {
+    if (err) {
+      console.error('Error de autenticación con Discord:', err);
+      return res.redirect('/login');
+    }
+    if (!user) {
+      console.error('Discord no devolvió usuario. Info:', info);
+      return res.redirect('/login');
+    }
+    req.logIn(user, (loginErr) => {
+      if (loginErr) {
+        console.error('Error al guardar la sesión:', loginErr);
+        return res.redirect('/login');
+      }
+      const redirectTo = req.session.returnTo || '/dashboard';
+      delete req.session.returnTo;
+      res.redirect(redirectTo);
+    });
+  })(req, res, next);
+});
 
 router.get('/logout', (req, res, next) => {
   req.logout((err) => {
