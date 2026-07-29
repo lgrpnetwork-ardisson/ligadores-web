@@ -7,6 +7,10 @@ const path = require('path');
 
 const app = express();
 
+// Necesario en Render (y cualquier hosting detrás de un proxy/balanceador):
+// sin esto, las cookies de sesión "secure" no funcionan bien detrás de HTTPS terminado en el proxy.
+app.set('trust proxy', 1);
+
 const sessionStore = new MySQLStore({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT || 3306,
