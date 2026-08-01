@@ -170,7 +170,16 @@ a.card:hover{transform:translateY(-4px); border-color:var(--ink-faint);}
 
 .steps-row{display:grid; grid-template-columns:repeat(3, 1fr); gap:1.6rem; margin:1.6rem 0 3rem;}
 @media (max-width:700px){ .steps-row{grid-template-columns:1fr;} }
+.steps-row-4{grid-template-columns:repeat(4, 1fr);}
+@media (max-width:900px){ .steps-row-4{grid-template-columns:1fr 1fr;} }
+@media (max-width:560px){ .steps-row-4{grid-template-columns:1fr;} }
 .step-tile .step-num{font-family:'JetBrains Mono', monospace; color:var(--ink-faint); font-size:.75rem; margin-bottom:.8rem;}
+
+.ip-box{
+  background:var(--surface-2); border:1px solid var(--line); padding:1rem 1.4rem;
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;
+}
+.ip-value{font-family:'JetBrains Mono', monospace; font-size:1rem; color:var(--ink); display:block; word-break:break-all;}
 
 .cta-band{
   text-align:center; padding:4rem 2rem; margin-top:3rem;
