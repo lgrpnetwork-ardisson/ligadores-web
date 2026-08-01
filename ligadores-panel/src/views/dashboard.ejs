@@ -11,6 +11,46 @@
         <p>Datos de tu personaje sincronizados directamente desde el servidor.</p>
       </div>
 
+      <div class="card" style="margin-bottom:1.6rem;">
+        <div class="stat-label">Guía de acceso</div>
+        <h3 style="color:var(--white); font-size:1.3rem; margin:.5rem 0 1.4rem;">Cómo entrar al servidor</h3>
+        <div class="steps-row steps-row-4" style="margin:0 0 1.4rem;">
+          <div class="card step-tile">
+            <div class="step-num">EXP-01</div>
+            <h3 style="color:var(--white); font-size:1.05rem; margin-bottom:.5rem;">Instala GTA V</h3>
+            <p style="color:var(--ink-dim); font-size:.88rem;">Necesitas una copia legítima del juego en Steam, Epic Games o Rockstar Games.</p>
+          </div>
+          <div class="card step-tile">
+            <div class="step-num">EXP-02</div>
+            <h3 style="color:var(--white); font-size:1.05rem; margin-bottom:.5rem;">Descarga FiveM</h3>
+            <p style="color:var(--ink-dim); font-size:.88rem;">El launcher gratuito que te conecta a servidores como el nuestro.</p>
+            <a href="https://fivem.net" target="_blank" rel="noopener" class="btn btn-ghost btn-small" style="margin-top:.8rem;">fivem.net ↗</a>
+          </div>
+          <div class="card step-tile">
+            <div class="step-num">EXP-03</div>
+            <h3 style="color:var(--white); font-size:1.05rem; margin-bottom:.5rem;">Crea tu cuenta Cfx.re</h3>
+            <p style="color:var(--ink-dim); font-size:.88rem;">Regístrate gratis, es la cuenta que usa FiveM para conectarte a cualquier servidor.</p>
+            <a href="https://cfx.re" target="_blank" rel="noopener" class="btn btn-ghost btn-small" style="margin-top:.8rem;">cfx.re ↗</a>
+          </div>
+          <div class="card step-tile">
+            <div class="step-num">EXP-04</div>
+            <h3 style="color:var(--white); font-size:1.05rem; margin-bottom:.5rem;">Conéctate</h3>
+            <p style="color:var(--ink-dim); font-size:.88rem;">Abre FiveM, pulsa "Connect" y pega nuestra dirección, o búscanos por nombre.</p>
+          </div>
+        </div>
+        <div class="ip-box">
+          <div>
+            <span class="stat-label" style="margin-bottom:.3rem;">Dirección de conexión</span>
+            <span class="ip-value" id="ipValue">connect.ligadores.gg</span>
+          </div>
+          <button class="btn btn-ghost btn-small" id="copyIpBtn">Copiar IP</button>
+        </div>
+        <p style="color:var(--ink-faint); font-size:.82rem; margin-top:1rem;">
+          ¿Primera vez? Revisa la <a href="/rules" style="color:var(--ink); border-bottom:1px solid var(--ink-faint);">normativa</a>
+          y postúlate a un <a href="/jobs" style="color:var(--ink); border-bottom:1px solid var(--ink-faint);">trabajo</a> una vez estés dentro.
+        </p>
+      </div>
+
       <% if (!character) { %>
         <div class="empty-state">
           <p><strong>Todavía no encontramos un personaje vinculado a tu Discord.</strong></p>
