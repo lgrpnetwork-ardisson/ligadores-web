@@ -1,7 +1,8 @@
 <header class="panel-nav">
   <div class="nav-inner">
     <a href="/" class="brand"><img src="/images/logo.svg" alt="Ligadores" class="brand-logo">LIGADORES</a>
-    <nav>
+
+    <nav id="navLinks">
       <a href="/dashboard">Mi expediente</a>
       <a href="/jobs">Trabajos</a>
       <a href="/jobs/boss">Panel de jefe</a>
@@ -11,14 +12,20 @@
         <a href="/admin">Administración</a>
       <% } %>
     </nav>
-    <% if (user) { %>
-      <div class="user-chip">
-        <img src="<%= user.avatarURL %>" alt="">
-        <span><%= user.username %></span>
-        <a href="/logout" class="btn btn-ghost btn-small">Salir</a>
-      </div>
-    <% } else { %>
-      <a href="/login" class="btn btn-solid btn-small">Iniciar sesión</a>
-    <% } %>
+
+    <div class="nav-right">
+      <% if (user) { %>
+        <div class="user-chip">
+          <img src="<%= user.avatarURL %>" alt="">
+          <span><%= user.username %></span>
+          <a href="/logout" class="btn btn-ghost btn-small">Salir</a>
+        </div>
+      <% } else { %>
+        <a href="/login" class="btn btn-solid btn-small">Iniciar sesión</a>
+      <% } %>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </div>
 </header>
