@@ -16,6 +16,19 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // Copiar IP del servidor (dashboard)
+  var copyIpBtn = document.getElementById('copyIpBtn');
+  var ipValue = document.getElementById('ipValue');
+  if (copyIpBtn && ipValue) {
+    copyIpBtn.addEventListener('click', function () {
+      navigator.clipboard.writeText(ipValue.textContent.trim()).then(function () {
+        var original = copyIpBtn.textContent;
+        copyIpBtn.textContent = 'Copiado ✓';
+        setTimeout(function () { copyIpBtn.textContent = original; }, 1800);
+      });
+    });
+  }
+
   // Conteo animado de números (usado en el home)
   document.querySelectorAll('.count-up').forEach(function (el) {
     var target = parseInt(el.dataset.target, 10) || 0;
