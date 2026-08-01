@@ -88,6 +88,38 @@ Sin este paso, el dashboard del panel (`/dashboard`) siempre mostrará "no encon
 
 El inventario se lee de la tabla `inventories` de `ox_inventory` (columna `owner` = `citizenid`, columna `data` = JSON). Si tu versión de `ox_inventory` usa otros nombres, ajústalos en `getCharacterQBox()` dentro de `src/config/db.js`.
 
+### 5.2 Tiempo jugado y mugshot automático (Fivemanage)
+
+El resource `fivem-resource/lg-tracker` hace dos cosas automáticamente en tu servidor de FiveM, sin que tengas que tocar la base de datos ni el panel web:
+
+- Suma 1 minuto de tiempo jugado cada 60 segundos que un jugador está conectado.
+- Toma una foto (mugshot) del personaje 5 segundos después de que carga, y la sube directo a Fivemanage con `screencapture:remoteUpload`.
+
+Ambos se guardan en `metadata.playtime` y `metadata.photo` de la tabla `players` — que es **exactamente** lo que el panel ya lee en `getCharacterData()`. No hace falta ningún cambio adicional en la web.
+
+**Requisitos previos:**
+1. Ya tienes [`screencapture`](https://github.com/itschip/screencapture) instalado (el sucesor de `screenshot-basic`) — no se necesita nada más.
+2. Crea una cuenta gratis en [fivemanage.com](https://fivemanage.com) y genera tu API key de tipo **Media**.
+
+**En `fivem-resource/lg-tracker/server.lua`, pon tu key directo en el código:**
+```lua
+local FIVEMANAGE_API_KEY = 'tu_api_key_aqui'
+```
+⚠️ Como la key queda escrita directo en este archivo, **no subas esta carpeta con la key puesta a un repositorio público de GitHub** — solo cópiala directo a tu servidor de FiveM.
+
+**En tu `server.cfg`, en este orden:**
+```
+ensure screencapture
+ensure qbx_core
+ensure lg-tracker
+```
+
+**Ajustes disponibles** (arriba del `server.lua`):
+- `PLAYTIME_INTERVAL_MS`: cada cuánto se suma tiempo jugado (por defecto, cada minuto real).
+- `MUGSHOT_DELAY_MS`: cuánto espera tras cargar el personaje antes de tomar la foto, para evitar capturar la pantalla de carga.
+
+**Nota sobre privacidad:** como esto toma una captura de pantalla del jugador automáticamente en cada conexión, es buena práctica mencionarlo en tu normativa (`/rules`) para que la comunidad sepa que existe.
+
 ## 6. Correr el panel
 
 ```bash
