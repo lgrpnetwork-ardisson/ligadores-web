@@ -12,7 +12,7 @@ const pool = mysql.createPool({
 
 /**
  * ============================================================================
- * QBOX (qbx_core) + ox_inventory
+ * QBOX (qbx_core) + ox_inventory + player_vehicles + vms_housing
  * ============================================================================
  * La tabla `players` de qbx_core.sql identifica al personaje por `citizenid`,
  * y su identificador persistente es el `license` de Rockstar — NO guarda el
@@ -54,6 +54,12 @@ async function getCharacterData(discordId) {
   const job = typeof player.job === 'string' ? JSON.parse(player.job) : player.job;
   const metadata = typeof player.metadata === 'string' ? JSON.parse(player.metadata) : player.metadata;
 
+  // Foto del personaje (mugshot): la mayoría de servidores NO guardan esto por
+  // defecto. Si tienes algún script de apariencia/ID que guarde una URL o base64
+  // de foto (por ejemplo en metadata.photo o charinfo.image), la usamos aquí.
+  // AJUSTA AQUÍ el nombre del campo si tu script guarda la foto en otro lugar.
+  const photo = metadata?.photo || charinfo?.image || null;
+
   return {
     name: `${charinfo?.firstname || ''} ${charinfo?.lastname || ''}`.trim() || 'Personaje sin nombre',
     job: job?.label || 'Desempleado',
@@ -62,7 +68,10 @@ async function getCharacterData(discordId) {
     // AJUSTA AQUÍ: Qbox no trackea tiempo jugado por defecto. Necesitas un
     // resource propio que lo mida y lo guarde (por ejemplo, en `metadata.playtime`).
     playtimeMinutes: metadata?.playtime ?? 0,
+    photo,
     inventory: parseOxInventory(player.inventory),
+    vehicles: await getVehicles(citizenid),
+    properties: await getProperties(citizenid),
   };
 }
 
@@ -83,6 +92,51 @@ function parseOxInventory(raw) {
       }));
   } catch (err) {
     console.error('No se pudo leer players.inventory:', err.message);
+    return [];
+  }
+}
+
+// `player_vehicles` es la tabla estándar de Qbox/QBCore para vehículos
+// propios: player_vehicles(id, license, citizenid, vehicle, hash, plate, garage, state, ...)
+// El campo `vehicle` guarda el nombre interno del modelo (ej. "asbo"), no un
+// nombre bonito — no hay tabla de traducción de modelos por defecto en la DB.
+async function getVehicles(citizenid) {
+  try {
+    const [rows] = await pool.query(
+      `SELECT vehicle, plate, garage, state FROM player_vehicles WHERE citizenid = ? ORDER BY id DESC`,
+      [citizenid]
+    );
+    return rows.map(v => ({
+      model: v.vehicle,
+      plate: v.plate,
+      garage: v.garage,
+      parked: v.state === 1 || v.state === true,
+    }));
+  } catch (err) {
+    console.error('No se pudo leer player_vehicles:', err.message);
+    return [];
+  }
+}
+
+// AJUSTA AQUÍ — vms_housing no tiene un esquema 100% estandarizado/documentado
+// públicamente y puede variar según la versión que tengas instalada. Esta
+// consulta usa el nombre de tabla más común reportado (`houses`, con una
+// columna `owner` guardando el identificador del dueño). Si tu instalación
+// usa otro nombre de tabla o columna, este es el lugar exacto para corregirlo
+// — el try/catch de abajo evita que el dashboard se rompa mientras tanto.
+async function getProperties(citizenid) {
+  try {
+    const [rows] = await pool.query(
+      `SELECT id, type, owner_name, renter FROM houses WHERE owner = ? ORDER BY id DESC`,
+      [citizenid]
+    );
+    return rows.map(p => ({
+      id: p.id,
+      type: p.type || 'Propiedad',
+      rented: !!p.renter,
+    }));
+  } catch (err) {
+    console.error('No se pudo leer propiedades (vms_housing):', err.message);
     return [];
   }
 }
