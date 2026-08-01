@@ -1,4 +1,21 @@
 document.addEventListener('DOMContentLoaded', function () {
+  // Menú móvil (hamburguesa)
+  var navToggle = document.getElementById('navToggle');
+  var navLinks = document.getElementById('navLinks');
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', function () {
+      var isOpen = navLinks.classList.toggle('nav-open');
+      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    // Cierra el menú al elegir una opción
+    navLinks.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        navLinks.classList.remove('nav-open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+
   // Conteo animado de números (usado en el home)
   document.querySelectorAll('.count-up').forEach(function (el) {
     var target = parseInt(el.dataset.target, 10) || 0;
@@ -14,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Aparición suave al hacer scroll, aplicada automáticamente a los bloques principales
   var revealTargets = document.querySelectorAll(
-    '.card, .stat-tile, .step-tile, .product-card, .cta-band, .inv-item'
+    '.card, .stat-tile, .step-tile, .product-card, .cta-band, .chip'
   );
   revealTargets.forEach(function (el) { el.classList.add('reveal'); });
 
