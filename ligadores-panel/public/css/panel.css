@@ -59,19 +59,48 @@ h1,h2,h3{font-family:'Anton', sans-serif; font-weight:400; text-transform:upperc
 header.panel-nav{
   border-bottom:1px solid var(--line);
   padding:18px 0;
+  position:sticky; top:0; z-index:100;
+  background:rgba(10,10,9,.92); backdrop-filter:blur(6px);
 }
 .panel-nav .nav-inner{
   max-width:1080px; margin:0 auto; padding:0 6vw;
-  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;
+  display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  position:relative;
 }
-.brand{font-family:'Anton', sans-serif; font-size:1.2rem; display:flex; align-items:center; gap:.6em;}
+.brand{font-family:'Anton', sans-serif; font-size:1.2rem; display:flex; align-items:center; gap:.6em; flex-shrink:0;}
 .brand-logo{width:26px; height:26px; filter:invert(1); flex-shrink:0;}
 .brand .dot{width:8px; height:8px; background:var(--white); border-radius:50%;}
+
 .panel-nav nav{display:flex; gap:1.8em; font-family:'JetBrains Mono', monospace; font-size:.75rem; letter-spacing:.06em; text-transform:uppercase;}
-.panel-nav nav a{color:var(--ink-dim); transition:color .2s var(--ease);}
+.panel-nav nav a{color:var(--ink-dim); transition:color .2s var(--ease); white-space:nowrap;}
 .panel-nav nav a:hover{color:var(--ink);}
+
+.nav-right{display:flex; align-items:center; gap:1rem; flex-shrink:0;}
 .user-chip{display:flex; align-items:center; gap:.6em; font-family:'JetBrains Mono', monospace; font-size:.78rem;}
 .user-chip img{width:26px; height:26px; border-radius:50%; border:1px solid var(--line);}
+
+.nav-toggle{
+  display:none; flex-direction:column; justify-content:center; gap:5px;
+  width:30px; height:26px; background:none; border:none; cursor:pointer; padding:0; flex-shrink:0;
+}
+.nav-toggle span{display:block; width:100%; height:2px; background:var(--ink); transition:transform .2s var(--ease), opacity .2s var(--ease);}
+.nav-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.nav-toggle[aria-expanded="true"] span:nth-child(2){opacity:0;}
+.nav-toggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+@media (max-width:900px){
+  .panel-nav nav{
+    display:none;
+    position:absolute; top:calc(100% + 18px); left:0; right:0;
+    flex-direction:column; gap:0;
+    background:var(--bg); border:1px solid var(--line); border-top:none;
+    padding:.5rem 6vw 1rem;
+  }
+  .panel-nav nav.nav-open{display:flex;}
+  .panel-nav nav a{padding:.9rem 0; border-bottom:1px solid var(--line);}
+  .nav-toggle{display:flex;}
+  .user-chip span{display:none;}
+}
 
 main{padding:4rem 0 6rem;}
 .page-head{margin-bottom:3rem;}
@@ -161,6 +190,9 @@ table{width:100%; border-collapse:collapse; font-size:.9rem;}
 th, td{text-align:left; padding:.9rem 1rem; border-bottom:1px solid var(--line);}
 th{font-family:'JetBrains Mono', monospace; font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint);}
 td{color:var(--ink-dim);}
+@media (max-width:700px){
+  table{display:block; overflow-x:auto; white-space:nowrap; -webkit-overflow-scrolling:touch;}
+}
 
 .badge{font-family:'JetBrains Mono', monospace; font-size:.68rem; text-transform:uppercase; letter-spacing:.06em; padding:.3em .7em; border:1px solid var(--line);}
 .badge-pending{color:#d8c98d; border-color:#5a5238;}
@@ -179,33 +211,45 @@ form input:focus, form textarea:focus, form select:focus{outline:1px solid var(-
 
 .empty-state{text-align:center; padding:4rem 2rem; border:1px dashed var(--line); color:var(--ink-dim);}
 
-/* ---- Inventario ---- */
-.inventory-scroll{
+/* ---- Mugshot ---- */
+.character-header{display:flex; gap:1.4rem; align-items:center; flex-wrap:wrap;}
+.mugshot{
+  width:96px; height:120px; flex-shrink:0;
+  background:var(--surface-2); border:1px solid var(--line);
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+  color:var(--ink-faint);
+}
+.mugshot img{width:100%; height:100%; object-fit:cover; display:block;}
+.mugshot svg{width:44%; height:44%;}
+
+/* ---- Listas con scroll propio: inventario, vehículos, propiedades ---- */
+.scroll-panel{
   max-height:360px; overflow-y:auto; margin-top:1rem; padding-right:.5rem;
 }
-.inventory-grid{
+.chip-grid{
   display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:.7rem;
 }
-.inv-item{
+.chip{
   background:var(--surface-2); border:1px solid var(--line); padding:.85rem;
   display:flex; align-items:center; gap:.7rem;
   transition:border-color .2s var(--ease), transform .2s var(--ease);
 }
-.inv-item:hover{border-color:var(--ink-faint); transform:translateY(-2px);}
-.inv-item-icon{
+.chip:hover{border-color:var(--ink-faint); transform:translateY(-2px);}
+.chip-icon{
   width:32px; height:32px; flex-shrink:0; border-radius:50%;
   background:var(--surface); border:1px solid var(--line);
   display:flex; align-items:center; justify-content:center;
   font-family:'JetBrains Mono', monospace; font-size:.7rem; color:var(--ink-faint);
 }
-.inv-item-info{display:flex; flex-direction:column; overflow:hidden; min-width:0;}
-.inv-item-name{
+.chip-info{display:flex; flex-direction:column; overflow:hidden; min-width:0;}
+.chip-name{
   font-size:.84rem; color:var(--ink); text-transform:capitalize;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
-.inv-item-count{font-family:'JetBrains Mono', monospace; font-size:.7rem; color:var(--ink-faint);}
+.chip-sub{font-family:'JetBrains Mono', monospace; font-size:.7rem; color:var(--ink-faint); text-transform:uppercase;}
 @media (max-width:560px){
-  .inventory-grid{grid-template-columns:repeat(auto-fill, minmax(120px, 1fr));}
+  .chip-grid{grid-template-columns:repeat(auto-fill, minmax(120px, 1fr));}
+  .character-header{flex-direction:column; align-items:flex-start; text-align:left;}
 }
 
 .wiki-content h1, .wiki-content h2, .wiki-content h3{
