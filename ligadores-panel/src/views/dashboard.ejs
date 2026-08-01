@@ -17,6 +17,22 @@
           <p style="margin-top:.5rem;">Conéctate al servidor al menos una vez con este mismo Discord para que aparezcan tus datos aquí.</p>
         </div>
       <% } else { %>
+
+        <div class="card character-header" style="margin-bottom:1.6rem;">
+          <div class="mugshot">
+            <% if (character.photo) { %>
+              <img src="<%= character.photo %>" alt="Foto de <%= character.name %>">
+            <% } else { %>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+            <% } %>
+          </div>
+          <div>
+            <div class="stat-label">Personaje</div>
+            <h2 style="color:var(--white); font-size:1.6rem; margin:.4rem 0;"><%= character.name %></h2>
+            <p style="color:var(--ink-dim); font-family:'JetBrains Mono', monospace; font-size:.85rem;">Trabajo: <%= character.job %></p>
+          </div>
+        </div>
+
         <div class="grid-3" style="margin-bottom:1.6rem;">
           <div class="card">
             <div class="stat-label">Efectivo</div>
@@ -32,25 +48,41 @@
           </div>
         </div>
 
-        <div class="grid-2">
-          <div class="card">
-            <div class="stat-label">Personaje</div>
-            <h3 style="color:var(--white); font-size:1.4rem; margin:.4rem 0;"><%= character.name %></h3>
-            <p style="color:var(--ink-dim); font-family:'JetBrains Mono', monospace; font-size:.85rem;">Trabajo: <%= character.job %></p>
-          </div>
+        <div class="grid-2" style="margin-bottom:1.6rem;">
           <div class="card">
             <div class="stat-label">Inventario</div>
             <% if (!character.inventory || !character.inventory.length) { %>
               <p style="color:var(--ink-dim); margin-top:.6rem;">Sin objetos registrados, o tu script de inventario no está conectado todavía a este panel.</p>
             <% } else { %>
-              <div class="inventory-scroll">
-                <div class="inventory-grid">
+              <div class="scroll-panel">
+                <div class="chip-grid">
                   <% character.inventory.forEach(function(it){ %>
-                    <div class="inv-item">
-                      <div class="inv-item-icon">×<%= it.count || it.amount %></div>
-                      <div class="inv-item-info">
-                        <span class="inv-item-name"><%= (it.item || it.name || '').toString().replace(/_/g, ' ') %></span>
-                        <span class="inv-item-count">cantidad: <%= it.count || it.amount %></span>
+                    <div class="chip">
+                      <div class="chip-icon">×<%= it.count || it.amount %></div>
+                      <div class="chip-info">
+                        <span class="chip-name"><%= (it.item || it.name || '').toString().replace(/_/g, ' ') %></span>
+                        <span class="chip-sub">cantidad: <%= it.count || it.amount %></span>
+                      </div>
+                    </div>
+                  <% }) %>
+                </div>
+              </div>
+            <% } %>
+          </div>
+
+          <div class="card">
+            <div class="stat-label">Vehículos</div>
+            <% if (!character.vehicles || !character.vehicles.length) { %>
+              <p style="color:var(--ink-dim); margin-top:.6rem;">No tienes vehículos registrados en el garaje.</p>
+            <% } else { %>
+              <div class="scroll-panel">
+                <div class="chip-grid">
+                  <% character.vehicles.forEach(function(v){ %>
+                    <div class="chip">
+                      <div class="chip-icon"><%= (v.model || '??').toString().slice(0,2).toUpperCase() %></div>
+                      <div class="chip-info">
+                        <span class="chip-name"><%= v.model %></span>
+                        <span class="chip-sub"><%= v.plate %> · <%= v.parked ? 'guardado' : 'fuera' %></span>
                       </div>
                     </div>
                   <% }) %>
@@ -59,6 +91,28 @@
             <% } %>
           </div>
         </div>
+
+        <div class="card">
+          <div class="stat-label">Propiedades</div>
+          <% if (!character.properties || !character.properties.length) { %>
+            <p style="color:var(--ink-dim); margin-top:.6rem;">No tienes propiedades registradas.</p>
+          <% } else { %>
+            <div class="scroll-panel">
+              <div class="chip-grid">
+                <% character.properties.forEach(function(p){ %>
+                  <div class="chip">
+                    <div class="chip-icon">H</div>
+                    <div class="chip-info">
+                      <span class="chip-name"><%= p.type %></span>
+                      <span class="chip-sub"><%= p.rented ? 'alquilada' : 'propia' %></span>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+            </div>
+          <% } %>
+        </div>
+
       <% } %>
     </div>
   </main>
