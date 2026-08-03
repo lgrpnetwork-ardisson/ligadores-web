@@ -208,6 +208,28 @@ td{color:var(--ink-dim);}
 .badge-approved{color:#a8d8ae; border-color:#3a5a3e;}
 .badge-rejected{color:#d89a9a; border-color:#5a3a3a;}
 
+/* ---- Planes VIP ---- */
+.plan{display:flex; flex-direction:column; position:relative;}
+.plan-name{font-family:'Anton', sans-serif; font-size:1.4rem; color:var(--white); text-transform:uppercase;}
+.plan-price{font-family:'JetBrains Mono', monospace; font-size:1.4rem; color:var(--ink); margin:.8rem 0 1.2rem;}
+.plan-price span{font-size:.68rem; color:var(--ink-faint);}
+.plan ul{margin-bottom:1.2rem; flex-grow:1; list-style:none;}
+.plan li{color:var(--ink-dim); font-size:.85rem; padding:.5rem 0; border-top:1px solid var(--line); display:flex; gap:.6rem;}
+.plan li:first-child{border-top:none;}
+.plan li::before{content:"—"; color:var(--ink-faint); flex-shrink:0;}
+.plan select{width:100%; background:var(--surface-2); border:1px solid var(--line); color:var(--ink); padding:.6em .8em; font-family:'JetBrains Mono', monospace; font-size:.85rem;}
+.plan-current{border-color:var(--white);}
+.plan-current::before{
+  content:"TU PLAN"; position:absolute; top:-1px; right:-1px;
+  background:var(--white); color:var(--black);
+  font-family:'JetBrains Mono', monospace; font-size:.6rem; letter-spacing:.08em; padding:.35em .7em;
+}
+
+.vip-badge{margin-left:.6rem;}
+.vip-bronce{color:#c88a4a; border-color:#6b4a28;}
+.vip-plata{color:#c9c9c9; border-color:#6b6b6b;}
+.vip-oro{color:#e8c95a; border-color:#6b5a1c;}
+
 form label{display:block; font-family:'JetBrains Mono', monospace; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:.5rem;}
 form input, form textarea, form select{
   width:100%; background:var(--surface-2); border:1px solid var(--line); color:var(--ink);
