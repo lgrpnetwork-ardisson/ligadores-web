@@ -6,9 +6,44 @@
   <main>
     <div class="container">
       <div class="page-head">
+        <div class="eyebrow">Membresías</div>
+        <h1 style="font-size:clamp(1.8rem, 4vw, 2.4rem);">Planes VIP</h1>
+        <p>
+          <% if (currentVip.active) { %>
+            Tu plan actual: <strong style="color:var(--white); text-transform:uppercase;"><%= currentVip.level %></strong>
+            <% if (currentVip.expires) { %> — vence el <%= new Date(currentVip.expires).toLocaleDateString('es-DO') %><% } else { %> (permanente)<% } %>
+          <% } else { %>
+            No tienes un plan VIP activo todavía.
+          <% } %>
+        </p>
+      </div>
+
+      <div class="grid-3" style="margin-bottom:3.5rem;">
+        <% vipTiers.forEach(function(tier){ %>
+          <div class="card plan <%= (currentVip.active && currentVip.level === tier.level) ? 'plan-current' : '' %>">
+            <div class="plan-name"><%= tier.label %></div>
+            <div class="plan-price">$<%= tier.pricePerMonth %> <span>/ mes</span></div>
+            <ul>
+              <% tier.benefits.forEach(function(b){ %><li><%= b %></li><% }) %>
+            </ul>
+            <form method="POST" action="/shop/vip/<%= tier.level %>/buy">
+              <label for="months-<%= tier.level %>" style="font-family:'JetBrains Mono', monospace; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); display:block; margin-bottom:.4rem;">Duración</label>
+              <select name="months" id="months-<%= tier.level %>">
+                <option value="1">1 mes</option>
+                <option value="3">3 meses</option>
+                <option value="6">6 meses</option>
+                <option value="12">12 meses</option>
+              </select>
+              <button type="submit" class="btn btn-solid" style="width:100%; justify-content:center; margin-top:.9rem;">Comprar</button>
+            </form>
+          </div>
+        <% }) %>
+      </div>
+
+      <div class="page-head">
         <div class="eyebrow">Apoya al servidor</div>
-        <h1>Mercado</h1>
-        <p>Al comprar, tu orden queda pendiente hasta que un administrador confirme el pago. Recibirás aviso por Discord.</p>
+        <h1 style="font-size:clamp(1.8rem, 4vw, 2.4rem);">Mercado</h1>
+        <p>Monedas, propiedades y otros artículos. Al comprar, tu orden queda pendiente hasta que un administrador confirme el pago.</p>
       </div>
 
       <% if (!items.length) { %>
