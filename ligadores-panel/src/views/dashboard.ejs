@@ -11,6 +11,25 @@
         <p>Datos de tu personaje sincronizados directamente desde el servidor.</p>
       </div>
 
+      <div class="card" style="margin-bottom:1.6rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <div class="stat-label">Membresía</div>
+          <h3 style="color:var(--white); font-size:1.3rem; margin:.5rem 0 0;">
+            <% if (vip.active) { %>
+              <span class="badge vip-badge vip-<%= vip.level %>"><%= vip.level.toUpperCase() %></span>
+            <% } else { %>
+              Sin VIP
+            <% } %>
+          </h3>
+          <% if (vip.active && vip.expires) { %>
+            <p style="color:var(--ink-dim); font-size:.85rem; margin-top:.5rem;">Vence el <%= new Date(vip.expires).toLocaleDateString('es-DO') %></p>
+          <% } else if (vip.active) { %>
+            <p style="color:var(--ink-dim); font-size:.85rem; margin-top:.5rem;">Membresía permanente</p>
+          <% } %>
+        </div>
+        <a href="/shop" class="btn btn-ghost btn-small">Ver planes VIP</a>
+      </div>
+
       <% if (!character) { %>
         <div class="empty-state">
           <p><strong>Todavía no encontramos un personaje vinculado a tu Discord.</strong></p>
