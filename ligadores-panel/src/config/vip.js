@@ -1,37 +1,27 @@
-// Planes VIP disponibles en la tienda.
-// Para cambiar precios o beneficios, edita este archivo directamente —
-// no requiere tocar la base de datos.
-const VIP_TIERS = [
-  {
-    level: 'bronce',
-    label: 'VIP Bronce',
-    pricePerMonth: 5,
-    benefits: [
-      'Cola de acceso prioritaria',
-      'Rol de Discord exclusivo',
-      '1 vehículo cosmético',
-    ],
-  },
-  {
-    level: 'plata',
-    label: 'VIP Plata',
-    pricePerMonth: 10,
-    benefits: [
-      'Todo lo de Bronce',
-      'Slot de personaje adicional',
-      'Acceso a garaje privado',
-    ],
-  },
-  {
-    level: 'oro',
-    label: 'VIP Oro',
-    pricePerMonth: 20,
-    benefits: [
-      'Todo lo de Plata',
-      'Propiedad exclusiva de temporada',
-      'Acceso anticipado a eventos',
-    ],
-  },
-];
+// Los planes VIP ya no viven hardcodeados aquí — se administran desde
+// /admin/vip y se guardan en la tabla `vip_tiers`. Este archivo solo trae
+// funciones de ayuda para leerlos con un formato cómodo de usar.
+const { pool } = require('./db');
 
-module.exports = { VIP_TIERS };
+async function getVipTiers() {
+  const [rows] = await pool.query(`SELECT * FROM vip_tiers ORDER BY position`);
+  return rows.map(formatTier);
+}
+
+async function getVipTier(level) {
+  const [rows] = await pool.query(`SELECT * FROM vip_tiers WHERE level = ? LIMIT 1`, [level]);
+  if (!rows.length) return null;
+  return formatTier(rows[0]);
+}
+
+function formatTier(row) {
+  return {
+    level: row.level,
+    label: row.label,
+    pricePerMonth: Number(row.price_per_month),
+    benefits: (row.benefits || '').split('\n').map(s => s.trim()).filter(Boolean),
+    discordRoleId: row.discord_role_id,
+  };
+}
+
+module.exports = { getVipTiers, getVipTier };
