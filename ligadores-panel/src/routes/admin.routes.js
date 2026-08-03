@@ -4,6 +4,7 @@ const fs = require('fs');
 const multer = require('multer');
 const { ensureAdmin } = require('../middleware/auth');
 const { pool } = require('../config/db');
+const { syncVipDiscordRole } = require('../config/discord-roles');
 
 // ---------- Subida de imágenes de la tienda ----------
 const uploadDir = path.join(__dirname, '..', '..', 'public', 'uploads', 'shop');
@@ -114,6 +115,29 @@ router.post('/admin/jobs/:id/bosses/:discordId/remove', ensureAdmin, async (req,
   }
 });
 
+// ---------- Planes VIP ----------
+router.get('/admin/vip', ensureAdmin, async (req, res, next) => {
+  try {
+    const [tiers] = await pool.query(`SELECT * FROM vip_tiers ORDER BY position`);
+    res.render('admin-vip', { user: req.user, title: 'Planes VIP', tiers });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/admin/vip/:level/edit', ensureAdmin, async (req, res, next) => {
+  try {
+    const { label, price_per_month, benefits, discord_role_id } = req.body;
+    await pool.query(
+      `UPDATE vip_tiers SET label = ?, price_per_month = ?, benefits = ?, discord_role_id = ? WHERE level = ?`,
+      [label, price_per_month, benefits, discord_role_id ? discord_role_id.trim() : null, req.params.level]
+    );
+    res.redirect('/admin/vip');
+  } catch (err) {
+    next(err);
+  }
+});
+
 // ---------- Tienda ----------
 router.get('/admin/shop', ensureAdmin, async (req, res, next) => {
   try {
@@ -184,6 +208,14 @@ router.post('/admin/orders/:id/fulfill', ensureAdmin, async (req, res, next) => 
            vip_expires = DATE_ADD(GREATEST(IFNULL(vip_expires, NOW()), NOW()), INTERVAL ? MONTH)`,
         [order.discord_id, order.vip_level, order.vip_months, order.vip_months]
       );
+
+      // No dejamos que un fallo en Discord tumbe la confirmación del pago —
+      // si falla, el admin puede asignar el rol a mano y el log queda en consola.
+      try {
+        await syncVipDiscordRole(order.discord_id, order.vip_level);
+      } catch (err) {
+        console.error('[vip-discord] Error inesperado sincronizando el rol:', err.message);
+      }
     }
 
     await pool.query(`UPDATE orders SET status = 'fulfilled' WHERE id = ?`, [req.params.id]);
