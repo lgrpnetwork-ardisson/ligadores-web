@@ -14,12 +14,13 @@
         <div class="empty-state">No hay órdenes pendientes.</div>
       <% } else { %>
         <table>
-          <thead><tr><th>Usuario</th><th>Artículo</th><th>Precio</th><th>Fecha</th><th></th></tr></thead>
+          <thead><tr><th>Usuario</th><th>Artículo</th><th>Tipo</th><th>Precio</th><th>Fecha</th><th></th></tr></thead>
           <tbody>
             <% orders.forEach(function(order){ %>
               <tr>
                 <td style="color:var(--ink);">@<%= order.discord_username %></td>
                 <td><%= order.item_name %></td>
+                <td><%= order.order_type === 'vip' ? 'VIP' : 'Artículo' %></td>
                 <td>$<%= Number(order.price).toFixed(2) %></td>
                 <td><%= new Date(order.created_at).toLocaleDateString('es-DO') %></td>
                 <td>
