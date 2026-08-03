@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { ensureAuth } = require('../middleware/auth');
 const { pool } = require('../config/db');
-const { VIP_TIERS } = require('../config/vip');
+const { getVipTiers, getVipTier } = require('../config/vip');
 
 function getEffectiveVip(row) {
   if (!row) return { level: 'none', expires: null, active: false };
@@ -20,8 +20,9 @@ router.get('/shop', ensureAuth, async (req, res, next) => {
       [req.user.id]
     );
     const currentVip = getEffectiveVip(vipRows[0]);
+    const vipTiers = await getVipTiers();
 
-    res.render('shop', { user: req.user, title: 'Mercado', items, vipTiers: VIP_TIERS, currentVip });
+    res.render('shop', { user: req.user, title: 'Mercado', items, vipTiers, currentVip });
   } catch (err) {
     next(err);
   }
@@ -29,7 +30,7 @@ router.get('/shop', ensureAuth, async (req, res, next) => {
 
 router.post('/shop/vip/:level/buy', ensureAuth, async (req, res, next) => {
   try {
-    const tier = VIP_TIERS.find(t => t.level === req.params.level);
+    const tier = await getVipTier(req.params.level);
     if (!tier) return res.redirect('/shop');
 
     const months = Math.max(1, Math.min(24, parseInt(req.body.months, 10) || 1));
