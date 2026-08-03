@@ -170,6 +170,22 @@ router.get('/admin/orders', ensureAdmin, async (req, res, next) => {
 
 router.post('/admin/orders/:id/fulfill', ensureAdmin, async (req, res, next) => {
   try {
+    const [[order]] = await pool.query(`SELECT * FROM orders WHERE id = ?`, [req.params.id]);
+    if (!order) return res.redirect('/admin/orders');
+
+    if (order.order_type === 'vip' && order.vip_level && order.vip_months) {
+      // Si ya tenía VIP vigente, se extiende desde su fecha de vencimiento;
+      // si no tenía o ya venció, se cuenta desde hoy.
+      await pool.query(
+        `INSERT INTO lg_vip_players (discord_id, vip_level, vip_expires)
+         VALUES (?, ?, DATE_ADD(NOW(), INTERVAL ? MONTH))
+         ON DUPLICATE KEY UPDATE
+           vip_level = VALUES(vip_level),
+           vip_expires = DATE_ADD(GREATEST(IFNULL(vip_expires, NOW()), NOW()), INTERVAL ? MONTH)`,
+        [order.discord_id, order.vip_level, order.vip_months, order.vip_months]
+      );
+    }
+
     await pool.query(`UPDATE orders SET status = 'fulfilled' WHERE id = ?`, [req.params.id]);
     res.redirect('/admin/orders');
   } catch (err) {
