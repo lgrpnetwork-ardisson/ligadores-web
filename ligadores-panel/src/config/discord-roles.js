@@ -47,6 +47,11 @@ async function syncVipDiscordRole(discordId, newLevel) {
     }
   }
 
+  if (newLevel === 'none') {
+    // Solo queríamos quitar los roles de VIP que tuviera — ya se hizo arriba.
+    return { ok: true };
+  }
+
   if (!newRoleId) {
     console.error(`[vip-discord] El nivel "${newLevel}" no tiene discord_role_id configurado en /admin/vip.`);
     return { ok: false, reason: 'no_role_configured' };
