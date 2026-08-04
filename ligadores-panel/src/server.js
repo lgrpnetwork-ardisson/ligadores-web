@@ -61,6 +61,23 @@ app.use(require('./routes/wiki.routes'));
 app.use(require('./routes/shop.routes'));
 app.use(require('./routes/admin.routes'));
 
+// Endpoint opcional para disparar el chequeo de vencimientos de VIP desde un
+// servicio de cron externo (ej. cron-job.org), por si el panel se duerme por
+// inactividad y el scheduler interno no llega a correr a tiempo.
+// Requiere CRON_SECRET en el .env; sin él, este endpoint queda deshabilitado.
+app.get('/internal/vip-expiry-check', async (req, res) => {
+  if (!process.env.CRON_SECRET || req.query.token !== process.env.CRON_SECRET) {
+    return res.status(403).json({ ok: false, error: 'forbidden' });
+  }
+  try {
+    const { checkExpiredVips } = require('./jobs/vip-expiry');
+    const count = await checkExpiredVips();
+    res.json({ ok: true, expiredProcessed: count });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
 // 404
 app.use((req, res) => {
   res.status(404).render('error', { user: req.user, title: 'No encontrado', message: 'Ese expediente no existe.' });
@@ -77,3 +94,7 @@ app.listen(PORT, () => {
   const publicUrl = process.env.PUBLIC_URL || `http://localhost:${PORT}`;
   console.log(`Panel de Ligadores corriendo en ${publicUrl} (puerto ${PORT}, escuchando en todas las interfaces de red)`);
 });
+
+// Revisa cada 15 minutos si algún VIP venció, y si es así, le quita el rol
+// de Discord automáticamente. Ver src/jobs/vip-expiry.js para más detalle.
+require('./jobs/vip-expiry').startVipExpiryScheduler();
