@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { ensureAuth } = require('../middleware/auth');
-const { getCharacterData, pool } = require('../config/db');
+const { getAllCharacters, pool } = require('../config/db');
 
 function getEffectiveVip(row) {
   if (!row) return { level: 'none', expires: null, active: false };
@@ -10,7 +10,7 @@ function getEffectiveVip(row) {
 
 router.get('/dashboard', ensureAuth, async (req, res, next) => {
   try {
-    const character = await getCharacterData(req.user.id);
+    const characters = await getAllCharacters(req.user.id);
 
     const [vipRows] = await pool.query(
       `SELECT vip_level, vip_expires FROM lg_vip_players WHERE discord_id = ? LIMIT 1`,
@@ -21,7 +21,7 @@ router.get('/dashboard', ensureAuth, async (req, res, next) => {
     res.render('dashboard', {
       user: req.user,
       title: 'Mi expediente',
-      character, // null si el Discord aún no está vinculado a ningún personaje in-game
+      characters, // array vacío si el Discord aún no está vinculado a ningún personaje
       vip,
     });
   } catch (err) {
