@@ -16,7 +16,28 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Copiar IP del servidor (dashboard)
+  // Pestañas de personaje (dashboard, cuando hay varios personajes)
+  var charTabs = document.querySelectorAll('.char-tab');
+  if (charTabs.length) {
+    charTabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var index = tab.dataset.charIndex;
+
+        document.querySelectorAll('.char-tab').forEach(function (t) {
+          t.classList.remove('active');
+        });
+        document.querySelectorAll('.char-panel').forEach(function (p) {
+          p.style.display = 'none';
+        });
+
+        tab.classList.add('active');
+        var panel = document.querySelector('[data-char-panel="' + index + '"]');
+        if (panel) panel.style.display = 'block';
+      });
+    });
+  }
+
+  // Copiar IP del servidor (dashboard / home)
   var copyIpBtn = document.getElementById('copyIpBtn');
   var ipValue = document.getElementById('ipValue');
   if (copyIpBtn && ipValue) {
