@@ -19,9 +19,15 @@ const pool = mysql.createPool({
  * Discord ID en ninguna columna por defecto.
  *
  * Por eso este panel usa una tabla puente `discord_links` (citizenid <-> discord_id)
- * que se llena SOLA desde tu servidor de FiveM gracias al resource incluido en
- * fivem-resource/ligadores_discordlink. Instálalo en tu servidor o esta función
- * siempre devolverá null. Ver README.md sección 5.1 para instalarlo.
+ * que se llena SOLA desde tu servidor de FiveM gracias al resource
+ * fivem-resource/ligadores_discordlink. Instálalo en tu servidor o esta
+ * función siempre devolverá null. Ver README.md sección 5.1 para instalarlo.
+ *
+ * IMPORTANTE: un mismo Discord puede tener VARIOS personajes vinculados
+ * (varias filas en discord_links con el mismo discord_id, distinto
+ * citizenid). Cuando eso pasa, el panel muestra el personaje con el que
+ * jugaste MÁS RECIENTE (columna updated_at, que se actualiza cada vez que
+ * el resource de FiveM detecta que ese personaje se conectó).
  *
  * Estructura de qbx_core.sql:
  *   players(id, citizenid, license, name, money, charinfo, job, gang, position, metadata, inventory)
@@ -31,16 +37,7 @@ const pool = mysql.createPool({
  * ============================================================================
  */
 
-async function getCharacterData(discordId) {
-  // 1. Encuentra el citizenid vinculado a este Discord ID
-  const [links] = await pool.query(
-    `SELECT citizenid FROM discord_links WHERE discord_id = ? LIMIT 1`,
-    [discordId]
-  );
-  if (!links.length) return null;
-  const { citizenid } = links[0];
-
-  // 2. Trae los datos del personaje, incluyendo el inventario
+async function getCharacterByCitizenId(citizenid) {
   const [rows] = await pool.query(
     `SELECT citizenid, charinfo, money, job, metadata, inventory
      FROM players WHERE citizenid = ? LIMIT 1`,
@@ -54,25 +51,43 @@ async function getCharacterData(discordId) {
   const job = typeof player.job === 'string' ? JSON.parse(player.job) : player.job;
   const metadata = typeof player.metadata === 'string' ? JSON.parse(player.metadata) : player.metadata;
 
-  // Foto del personaje (mugshot): la mayoría de servidores NO guardan esto por
-  // defecto. Si tienes algún script de apariencia/ID que guarde una URL o base64
-  // de foto (por ejemplo en metadata.photo o charinfo.image), la usamos aquí.
-  // AJUSTA AQUÍ el nombre del campo si tu script guarda la foto en otro lugar.
   const photo = metadata?.photo || charinfo?.image || null;
 
   return {
+    citizenid,
     name: `${charinfo?.firstname || ''} ${charinfo?.lastname || ''}`.trim() || 'Personaje sin nombre',
     job: job?.label || 'Desempleado',
     cash: money?.cash ?? 0,
     bank: money?.bank ?? 0,
-    // AJUSTA AQUÍ: Qbox no trackea tiempo jugado por defecto. Necesitas un
-    // resource propio que lo mida y lo guarde (por ejemplo, en `metadata.playtime`).
     playtimeMinutes: metadata?.playtime ?? 0,
     photo,
     inventory: parseOxInventory(player.inventory),
     vehicles: await getVehicles(citizenid),
     properties: await getProperties(citizenid),
   };
+}
+
+// Trae TODOS los personajes vinculados a un Discord, del más reciente al
+// más antiguo (una persona puede tener varios personajes).
+async function getAllCharacters(discordId) {
+  const [links] = await pool.query(
+    `SELECT citizenid FROM discord_links WHERE discord_id = ? ORDER BY updated_at DESC`,
+    [discordId]
+  );
+  if (!links.length) return [];
+
+  const characters = [];
+  for (const link of links) {
+    const character = await getCharacterByCitizenId(link.citizenid);
+    if (character) characters.push(character);
+  }
+  return characters;
+}
+
+// Se mantiene por compatibilidad: devuelve solo el personaje más reciente.
+async function getCharacterData(discordId) {
+  const characters = await getAllCharacters(discordId);
+  return characters[0] || null;
 }
 
 function parseOxInventory(raw) {
@@ -141,4 +156,4 @@ async function getProperties(citizenid) {
   }
 }
 
-module.exports = { pool, getCharacterData };
+module.exports = { pool, getCharacterData, getAllCharacters };
