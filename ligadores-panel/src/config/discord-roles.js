@@ -1,17 +1,12 @@
 // Asigna el rol de Discord correspondiente al nivel VIP comprado, y quita
-// cualquier otro rol de VIP que el usuario tuviera antes (para que no se
-// acumulen bronce+plata+oro a la vez).
+// cualquier otro rol de VIP que el usuario tuviera antes.
 //
 // Requiere un bot de Discord invitado a tu servidor con permiso de
 // "Gestionar roles", y que el rol del BOT esté por ENCIMA de los roles de
-// VIP en la jerarquía de tu servidor (si no, Discord rechaza la asignación).
+// VIP en la jerarquía de tu servidor.
 //
-// Variables de entorno necesarias:
-//   DISCORD_BOT_TOKEN   -> el token del bot (Developer Portal -> tu app -> Bot)
-//   DISCORD_GUILD_ID    -> el ID de tu servidor de Discord
-//
-// Los IDs de cada rol (bronce/plata/oro) se configuran desde /admin/vip,
-// no aquí — se guardan en la columna `discord_role_id` de `vip_tiers`.
+// Variables de entorno necesarias: DISCORD_BOT_TOKEN, DISCORD_GUILD_ID
+// Los IDs de cada rol se configuran desde /admin/vip (columna discord_role_id).
 
 const { pool } = require('./db');
 
@@ -34,7 +29,6 @@ async function syncVipDiscordRole(discordId, newLevel) {
     'Content-Type': 'application/json',
   };
 
-  // Quita cualquier otro rol de VIP que tenga
   for (const [level, roleId] of Object.entries(roleByLevel)) {
     if (!roleId || roleId === newRoleId) continue;
     try {
@@ -48,7 +42,6 @@ async function syncVipDiscordRole(discordId, newLevel) {
   }
 
   if (newLevel === 'none') {
-    // Solo queríamos quitar los roles de VIP que tuviera — ya se hizo arriba.
     return { ok: true };
   }
 
