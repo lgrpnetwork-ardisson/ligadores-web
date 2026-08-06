@@ -1,6 +1,5 @@
-// Los planes VIP ya no viven hardcodeados aquí — se administran desde
-// /admin/vip y se guardan en la tabla `vip_tiers`. Este archivo solo trae
-// funciones de ayuda para leerlos con un formato cómodo de usar.
+// Los planes VIP se administran desde /admin/vip y se guardan en la tabla
+// `vip_tiers`. Este archivo solo trae funciones de ayuda para leerlos.
 const { pool } = require('./db');
 
 async function getVipTiers() {
