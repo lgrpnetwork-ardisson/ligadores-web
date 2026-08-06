@@ -5,6 +5,7 @@ const multer = require('multer');
 const { ensureAdmin } = require('../middleware/auth');
 const { pool } = require('../config/db');
 const { syncVipDiscordRole } = require('../config/discord-roles');
+const { DEFAULT_BASE_SLOTS } = require('../config/slots');
 
 // ---------- Subida de imágenes de la tienda ----------
 const uploadDir = path.join(__dirname, '..', '..', 'public', 'uploads', 'shop');
@@ -209,13 +210,23 @@ router.post('/admin/orders/:id/fulfill', ensureAdmin, async (req, res, next) => 
         [order.discord_id, order.vip_level, order.vip_months, order.vip_months]
       );
 
-      // No dejamos que un fallo en Discord tumbe la confirmación del pago —
-      // si falla, el admin puede asignar el rol a mano y el log queda en consola.
       try {
         await syncVipDiscordRole(order.discord_id, order.vip_level);
       } catch (err) {
         console.error('[vip-discord] Error inesperado sincronizando el rol:', err.message);
       }
+    }
+
+    if (order.order_type === 'slot' && order.slot_amount) {
+      // Suma los slots comprados sobre lo que ya tenía (o sobre la base, si nunca había comprado).
+      const [[current]] = await pool.query(`SELECT slots FROM player_slots WHERE discord_id = ?`, [order.discord_id]);
+      const baseSlots = current ? current.slots : DEFAULT_BASE_SLOTS;
+      const newTotal = baseSlots + order.slot_amount;
+
+      await pool.query(
+        `INSERT INTO player_slots (discord_id, slots) VALUES (?, ?) ON DUPLICATE KEY UPDATE slots = ?`,
+        [order.discord_id, newTotal, newTotal]
+      );
     }
 
     await pool.query(`UPDATE orders SET status = 'fulfilled' WHERE id = ?`, [req.params.id]);
