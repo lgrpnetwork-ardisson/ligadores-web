@@ -5,6 +5,7 @@
   <%- include('partials/nav') %>
   <main>
     <div class="container">
+
       <div class="page-head">
         <div class="eyebrow">Membresías</div>
         <h1 style="font-size:clamp(1.8rem, 4vw, 2.4rem);">Planes VIP</h1>
@@ -41,6 +42,28 @@
       </div>
 
       <div class="page-head">
+        <div class="eyebrow">Cuenta</div>
+        <h1 style="font-size:clamp(1.8rem, 4vw, 2.4rem);">Slots de personaje</h1>
+        <p>Actualmente tienes <strong style="color:var(--white);"><%= currentSlots %></strong> slot<%= currentSlots === 1 ? '' : 's' %> de personaje disponibles.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:3.5rem; max-width:420px;">
+        <div class="plan-name" style="font-size:1.2rem;">Slot extra</div>
+        <div class="plan-price">$<%= extraSlotPrice %> <span>c/u</span></div>
+        <p style="color:var(--ink-dim); font-size:.85rem; margin-bottom:1.2rem;">Cada slot te permite tener un personaje adicional en el servidor.</p>
+        <form method="POST" action="/shop/slots/buy">
+          <label for="slot-quantity" style="font-family:'JetBrains Mono', monospace; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); display:block; margin-bottom:.4rem;">Cantidad</label>
+          <select name="quantity" id="slot-quantity">
+            <option value="1">1 slot</option>
+            <option value="2">2 slots</option>
+            <option value="3">3 slots</option>
+            <option value="5">5 slots</option>
+          </select>
+          <button type="submit" class="btn btn-solid" style="width:100%; justify-content:center; margin-top:.9rem;">Comprar</button>
+        </form>
+      </div>
+
+      <div class="page-head">
         <div class="eyebrow">Apoya al servidor</div>
         <h1 style="font-size:clamp(1.8rem, 4vw, 2.4rem);">Mercado</h1>
         <p>Monedas, propiedades y otros artículos. Al comprar, tu orden queda pendiente hasta que un administrador confirme el pago.</p>
@@ -68,6 +91,7 @@
           <% }) %>
         </div>
       <% } %>
+
     </div>
   </main>
 </body>
